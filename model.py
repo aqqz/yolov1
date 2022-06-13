@@ -2,7 +2,9 @@ import tensorflow as tf
 from keras.layers import Conv2D, MaxPooling2D, Dense, LeakyReLU, Flatten, Reshape, Dropout
 from utils import *
 from keras.applications.vgg16 import VGG16
+from keras.applications.mobilenet import MobileNet
 
+# 不能在imagenet上训练darknet，弃用
 def conv_leaky(input, filters, kernel_size, strides=1, padding="same"):
     x = Conv2D(filters, kernel_size, strides, padding)(input)
     x = LeakyReLU(alpha=0.1)(x)
@@ -43,10 +45,17 @@ def darknet_backbone(input):
 
 
 
-base_model = VGG16(
+# base_model = VGG16(
+#     include_top=False,
+#     weights='imagenet',
+#     input_shape=(224, 224, 3),
+# )
+
+base_model = MobileNet(
+    input_shape=(224, 224, 3),
+    alpha=0.25,
     include_top=False,
     weights='imagenet',
-    input_shape=(224, 224, 3),
 )
 
 base_model.trainable = True
@@ -54,9 +63,9 @@ base_model.trainable = True
 def yolo_net(input):
 
     x = base_model(input)
-
+    # x = Conv2D(256, 3, 1, padding="same", activation="relu")(x)
     x = Flatten()(x)
-    # x = Dense(4096)(x)
+    x = Dense(256)(x) # 降维，防止参数过多
     x = Dropout(0.5)(x)
     x = Dense(S*S*(5*B+C), activation="sigmoid")(x)
     x = Reshape(target_shape=(S, S, 5*B+C))(x)
