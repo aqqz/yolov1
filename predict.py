@@ -57,7 +57,7 @@ def predict(img_path):
     """
     img = load_image(img_path)
     input = tf.expand_dims(img, axis=0)
-    model = tf.keras.models.load_model("yolo.h5")
+    model = tf.keras.models.load_model("yolo_vgg16.h5")
     output = model.predict(input)
     
     img = cv2.imread(img_path)
