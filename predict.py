@@ -3,7 +3,7 @@ import cv2
 from voc_dataset import *
 
 iou_threshold = 0.5
-con_threshold = 0.4
+con_threshold = 0.05
 
 def bbox_trans(box_x, box_y, box_w, box_h, offset_x, offset_y, img_w, img_h):
     """
@@ -129,7 +129,7 @@ def predict(img_path):
     """
     img = load_image(img_path)
     input = tf.expand_dims(img, axis=0)
-    model = tf.keras.models.load_model("yolo_vgg16.h5")
+    model = tf.keras.models.load_model("yolo.h5")
     output = model.predict(input)
     
     img = cv2.imread(img_path)

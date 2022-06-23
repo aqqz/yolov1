@@ -51,12 +51,14 @@ def train(train_ds, val_ds, epochs=20, batch_size=32, optim="sgd", lr=0.01):
         gradients = tape.gradient(loss_value, model.trainable_variables)
         optimizer.apply_gradients(zip(gradients, model.trainable_variables))
         train_loss(loss_value)
+        train_acc(tf.argmax(labels[..., 10:], axis=3), tf.argmax(logits[..., 10:], axis=3))
 
     @tf.function
     def val_step(images, labels):
         logits = model(images, training=False)
         loss_value = yolo_loss(labels, logits)
         val_loss(loss_value)
+        val_acc(tf.argmax(labels[..., 10:], axis=3), tf.argmax(logits[..., 10:], axis=3))
 
 
     # 训练循环

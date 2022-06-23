@@ -70,7 +70,7 @@ def evaluate_tflite(model_path, test_images, test_labels):
         output_data = interpreter.get_tensor(output_details['index'])[0]
         print(output_data)
         # 计算分类精度
-        accuracy.update_state(tf.argmax(test_label), tf.argmax(output_data))
+        accuracy.update_state(tf.argmax(test_label[..., 10:], axis=2), tf.argmax(output_data[..., 10:], axis=2))
         count += 1
 
     end = time.time()
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     val_ds = generate_dataset(val_image_paths, val_image_labels)
     test_images, test_labels = load_data(val_ds) #导入验证集数据
 
-    lite_convert('yolo_mbv1_0.25.h5', quantization="int8", save_path="yolo.tflite")
+    lite_convert('yolo.h5', quantization="int8", save_path="yolo.tflite")
 
     save_samples(test_images, test_labels, len=100, mode="gray")
     
