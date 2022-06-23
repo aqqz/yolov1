@@ -17,12 +17,29 @@ def load_image(img_path):
     读入图像路径，返回img_tensor
     """
     raw = tf.io.read_file(img_path)
-    img = tf.io.decode_jpeg(raw, channels=3)
+    img = tf.io.decode_jpeg(raw, channels=1)
     img = tf.image.resize(img, size=[224, 224])
     img = tf.cast(img, dtype=tf.float32)
     img /= 255.0
     return img
 
+
+def load_data(datasets):
+    """
+    输入TensorFlow Dataset, 返回Numpy ndarray类型图像和标签
+    """
+    images = []
+    labels = []
+    print("loading data from datasets...\n")
+    
+    for step, (image, label) in enumerate(datasets):
+        images.append(image)
+        labels.append(label)
+    images = np.array(images)
+    labels = np.array(labels)
+
+    return images, labels
+    
 
 def draw_box(img_path, ob_infos):
     """

@@ -62,8 +62,9 @@ base_model.trainable = True
 
 def yolo_net(input):
 
-    x = base_model(input)
-    # x = Conv2D(256, 3, 1, padding="same", activation="relu")(x)
+    gray2rgb = Conv2D(filters=3, kernel_size=1, strides=1, activation=None)(input)
+    x = base_model(gray2rgb)
+    # x = Conv2D(256, 3, 1, padding="same")(x)
     x = Flatten()(x)
     x = Dense(256)(x) # 降维，防止参数过多
     x = Dropout(0.5)(x)
@@ -75,7 +76,7 @@ def yolo_net(input):
 
 if __name__ == '__main__':
 
-    input = tf.keras.layers.Input(shape=(224, 224, 3))
+    input = tf.keras.layers.Input(shape=(224, 224, 1))
     output = yolo_net(input)
     model = tf.keras.Model(input, output)
     model.summary()

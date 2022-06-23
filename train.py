@@ -16,7 +16,7 @@ def train(train_ds, val_ds, epochs=20, batch_size=32, optim="sgd", lr=0.01):
     val_ds = val_ds.batch(batch_size).prefetch(1)
 
     # 构建模型
-    input = tf.keras.layers.Input(shape=(224, 224, 3))
+    input = tf.keras.layers.Input(shape=(224, 224, 1))
     output = yolo_net(input)
     model = tf.keras.Model(input, output)
     model.summary()
