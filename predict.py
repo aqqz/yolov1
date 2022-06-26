@@ -131,16 +131,54 @@ def predict(img_path):
     input = tf.expand_dims(img, axis=0)
     model = tf.keras.models.load_model("yolo.h5")
     output = model.predict(input)
-    
+    # for test quantization
+    np.set_printoptions(suppress=True)
+    temp = np.array(output)
+    temp = np.round(temp, 8)
+    print(temp)
+
     img = cv2.imread(img_path)
     img_h, img_w = img.shape[0:2]
     ob_infos = post_progress(img_w, img_h, output)
     draw_box(img_path, ob_infos)
 
 
+def predict_tflite(img_path):
+    """
+    测试tflite模型
+    """
+    img = load_image(img_path)
+    interpreter = tf.lite.Interpreter("yolo.tflite")
+    interpreter.allocate_tensors()
+
+    input_details = interpreter.get_input_details()[0]
+    output_details = interpreter.get_output_details()[0]
+
+    # tf.print(input_details)
+    # tf.print(output_details)
+
+    if input_details["dtype"] == np.uint8:
+        input_scale, input_zero_point = input_details["quantization"]
+        img = img / input_scale + input_zero_point
+    # print(img)
+    input = np.expand_dims(img, 0).astype(input_details["dtype"])
+    # print(input)
+    interpreter.set_tensor(input_details["index"], input)
+    interpreter.invoke()
+    output = interpreter.get_tensor(output_details["index"])[0]
+    # print(output)
+    output_scale, output_zero_point = output_details["quantization"]
+    output = (output - output_zero_point) * output_scale
+    print(output)
+
+
+
+
+
 
 if __name__ == '__main__':
-    # test_img = os.path.join(voc_image_root, '2008_000054.jpg')
-    test_img = 'netpic.jpg'
+    test_img = os.path.join(voc_image_root, '2008_000054.jpg')
+    # test_img = 'netpic.jpg'
     predict(test_img)
+    predict_tflite(test_img)
     

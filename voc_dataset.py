@@ -7,9 +7,9 @@ from utils import *
 
 
 
-voc_annotation_root = '/home/taozhi/datasets/VOCdevkit/VOC2012/Annotations'
-voc_image_root = '/home/taozhi/datasets/VOCdevkit/VOC2012/JPEGImages'
-voc_txt_root = '/home/taozhi/datasets/VOCdevkit/VOC2012/ImageSets/Main'
+voc_annotation_root = '/home/taozhi/datasets/VOC2012trainval/VOCdevkit/VOC2012/Annotations'
+voc_image_root = '/home/taozhi/datasets/VOC2012trainval/VOCdevkit/VOC2012/JPEGImages'
+voc_txt_root = '/home/taozhi/datasets/VOC2012trainval/VOCdevkit/VOC2012/ImageSets/Main'
 
 voc_class_list = [
     'aeroplane', 'bicycle', 'bird', 'boat', 'bottle',
